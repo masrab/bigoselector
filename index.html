@@ -72,18 +72,6 @@ text.label {
   float: left;
 }
 
-text.row_text {
-  /*background-color: gold;*/
-  /*border: 1px solid red;*/
-  fill: red;
-
-}
-
-/*input.controls,
-#btn-title {
-  margin-right: 5px;
-}
-*/
 #btn-title {
   display: none;
 }
@@ -97,7 +85,8 @@ text.row_text {
   <div id='container'>
     <div class="chart"></div>
     <div class="controls">
-      <button type="button" class="btn btn-success" id="btn-title" disabled></button>
+      <button type="button" class="btn btn-success" id="btn-title" disabled></button> <br>
+      <table class='table table-bordered' id='tbl_output'></table>
       <label><input type='checkbox' id='toggle_row_txt' checked> show values</label>
     </div>
   </div>

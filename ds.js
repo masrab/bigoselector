@@ -80,8 +80,12 @@ d3.csv('heap.csv', function(err, cars) {
 
   foreground
   .on('mouseover', function(d) { 
-    d3.select('input#toggle_row_txt').property('checked') && title.text(d3.values(d));
     d3.select('#btn-title').text(d.Name).style('display', 'block');
+    if (d3.select('input#toggle_row_txt').property('checked')){
+      d3.select('#tbl_output').html(tbl_row(d));
+    } else {
+      d3.select('#tbl_output').html(null);
+    }
   })
   .on('mouseout', function(d) { return title.text(null); });
 
@@ -92,4 +96,12 @@ d3.csv('heap.csv', function(err, cars) {
 function path(d) {
   return line(dimensions.map(function(p) { return [x(p), y[p](d[p])]; }));
   // return line(dimensions.map(function(p) { return [x(p), d[p]?y[p](d[p]): d3.max(y[p].range())]; }));
+}
+
+function tbl_row(obj) {
+  var obj = d3.map(obj);
+  obj.remove('Name');
+  var header = obj.keys().map(function(v) { return '<th>'+v+'</th>'});
+  var row = obj.values().map(function(v) { return '<td>'+v+'</td>'});
+  return '<tr>' + header.join('') + '</tr>' + '<tr>'+row.join('')+'</tr>';
 }
