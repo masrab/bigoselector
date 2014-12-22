@@ -1,0 +1,6 @@
+Name,Heapify,Find Max,Extract Max,Increase Key,Insert,Delete,Merge
+Linked List (sorted),Undefined,O(1),O(1),O(n),O(n),O(1),O(m+n)
+Linked List (unsorted),Undefined,O(n),O(n),O(1),O(1),O(1),O(1)
+Binary Heap,O(n),O(1),O(log(n)),O(log(n)),O(log(n)),O(log(n)),O(m+n)
+Binomial Heap,Undefined,O(log(n)),O(log(n)),O(log(n)),O(log(n)),O(log(n)),O(log(n))
+Fibonacci Heap,Undefined,O(1),O(log(n)),O(1),O(1),O(log(n)),O(1)

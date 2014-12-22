@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+#container {
+  /*width: 1100px;*/
+  /*height: 500px;*/
+  padding: 10px;
+  /*border:1px solid black;*/
+  /*background-color: ghostwhite;*/
+
+}
+
+svg {
+  font: 10px sans-serif;
+}
+
+.background path {
+  fill: none;
+  stroke: #ddd;
+  shape-rendering: crispEdges;
+}
+
+.foreground path {
+  fill: none;
+  stroke: steelblue;
+}
+
+.foreground path:hover {
+  stroke: gold;
+  stroke-width: 3px;
+  /*z-index: 1000;*/
+}
+
+
+.brush .extent {
+  fill-opacity: .3;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
+
+.axis line,
+.axis path {
+  fill: none;
+  stroke: #000;
+  stroke-dasharray: 5,5;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+}
+
+text.label {
+  font: 12px Verdana;
+  fill: darkgray;
+}
+
+.label:hover {
+  fill: gold;
+}
+
+.controls label {
+  font: 12px Verdana;
+
+}
+
+.chart {
+  float: left;
+}
+.controls {
+  float: left;
+}
+
+text.row_text {
+  /*background-color: gold;*/
+  /*border: 1px solid red;*/
+  fill: red;
+
+}
+
+/*input.controls,
+#btn-title {
+  margin-right: 5px;
+}
+*/
+#btn-title {
+  display: none;
+}
+
+
+</style>
+<head>
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div id='container'>
+    <div class="chart"></div>
+    <div class="controls">
+      <button type="button" class="btn btn-success" id="btn-title" disabled></button>
+      <label><input type='checkbox' id='toggle_row_txt' checked> show values</label>
+    </div>
+  </div>
+
+
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="ds.js"></script>
+</body>
