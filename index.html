@@ -15,28 +15,15 @@ svg {
   font: 10px sans-serif;
 }
 
-.background path {
-  fill: none;
-  stroke: #ddd;
-  shape-rendering: crispEdges;
-}
-
 .foreground path {
   fill: none;
-  stroke: steelblue;
+  stroke: #ddd;
 }
 
 .foreground path:hover {
   stroke: gold;
   stroke-width: 3px;
   /*z-index: 1000;*/
-}
-
-
-.brush .extent {
-  fill-opacity: .3;
-  stroke: #fff;
-  shape-rendering: crispEdges;
 }
 
 .axis line,
@@ -60,16 +47,13 @@ text.label {
   fill: gold;
 }
 
-.controls label {
-  font: 12px Verdana;
-
-}
 
 .chart {
-  float: left;
+  /*float: left;*/
 }
-.controls {
-  float: left;
+.output {
+  width: 800px;
+  /*float: left;*/
 }
 
 #btn-title {
@@ -84,10 +68,9 @@ text.label {
 <body>
   <div id='container'>
     <div class="chart"></div>
-    <div class="controls">
-      <button type="button" class="btn btn-success" id="btn-title" disabled></button> <br>
+    <div class="output">
+      <button type="button" class="btn btn-danger" id="btn-title" disabled></button> <br>
       <table class='table table-bordered' id='tbl_output'></table>
-      <label><input type='checkbox' id='toggle_row_txt' checked> show values</label>
     </div>
   </div>
 
