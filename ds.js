@@ -59,12 +59,13 @@ d3.csv('ds.csv', function(err, cars) {
       .attr('class', 'label')
       .text(function(d) { return d; });
 
+      // highlight the first path
+      d3.select('.foreground path').call(highlight);
+
       foreground
       .on('mouseover', function(d) { 
         d3.selectAll('.foreground path').style({'stroke': '#ddd', 'stroke-width': '1px'})
-        d3.select(this).style({'stroke': 'gold', 'stroke-width': '3px'});
-        d3.select('#btn-title').text(d.Name).style('display', 'block');
-        d3.select('#tbl_output').html(tbl_row(d));
+        d3.select(this).call(highlight);
       });
 
 });
@@ -80,4 +81,10 @@ function tbl_row(obj) {
   var header = obj.keys().map(function(v) { return '<th>'+v+'</th>'});
   var row = obj.values().map(function(v) { return '<td>'+v+'</td>'});
   return '<tr>' + header.join('') + '</tr>' + '<tr>'+row.join('')+'</tr>';
+}
+
+function highlight(selection) {
+  selection.style({'stroke': 'gold', 'stroke-width': '3px'});
+  d3.select('#btn-title').text(selection.datum().Name).style('display', 'block');
+  d3.select('#tbl_output').html(tbl_row(selection.datum()));
 }
