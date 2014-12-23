@@ -18,11 +18,14 @@ var line = d3.svg.line(),
     background,
     foreground;
 
-d3.csv('ds.csv', function(err, cars) {
+d3.csv('ds.csv', function(err, dataset) {
+  draw(dataset);
+});
 
+
+function draw(dataset) {
   // extract colnames
-  dimensions = d3.keys(cars[0]).filter(function(d) {
-    // return d });
+  dimensions = d3.keys(dataset[0]).filter(function(d) {
     return d != "Name"});
 
   x.domain(dimensions);
@@ -30,14 +33,14 @@ d3.csv('ds.csv', function(err, cars) {
   // create an array of scales. one for each column
   dimensions.forEach(function(d){ 
     y[d] = d3.scale.ordinal()
-        .domain(d3.set(cars.map(function(row) { return row[d];})).values().sort()) // extract column
+        .domain(d3.set(dataset.map(function(row) { return row[d];})).values().sort()) // extract column
         .rangePoints([0,height-20])
   });
 
   var foreground = svg.append('g')
       .attr('class', 'foreground')
       .selectAll('path')
-      .data(cars)
+      .data(dataset)
       .enter()
       .append('path')
       .attr('d', path);
@@ -62,13 +65,16 @@ d3.csv('ds.csv', function(err, cars) {
       // highlight the first path
       d3.select('.foreground path').call(highlight);
 
+      // hover effect
       foreground
       .on('mouseover', function(d) { 
         d3.selectAll('.foreground path').style({'stroke': '#ddd', 'stroke-width': '1px'})
         d3.select(this).call(highlight);
       });
 
-});
+
+}
+
 
 // Returns the path for a given data point.
 function path(d) {
