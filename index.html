@@ -20,12 +20,6 @@ svg {
   stroke: #ddd;
 }
 
-.foreground path:hover {
-  stroke: gold;
-  stroke-width: 3px;
-  /*z-index: 1000;*/
-}
-
 .axis line,
 .axis path {
   fill: none;
@@ -53,6 +47,7 @@ text.label {
 }
 .output {
   width: 800px;
+  font: 12px Verdana;
   /*float: left;*/
 }
 
@@ -70,7 +65,7 @@ text.label {
     <div class="chart"></div>
     <div class="output">
       <button type="button" class="btn btn-danger" id="btn-title" disabled></button> <br>
-      <table class='table table-bordered' id='tbl_output'></table>
+      <table class='table table-bordered table-striped' id='tbl_output'></table>
     </div>
   </div>
 

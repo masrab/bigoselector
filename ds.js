@@ -61,6 +61,8 @@ d3.csv('ds.csv', function(err, cars) {
 
       foreground
       .on('mouseover', function(d) { 
+        d3.selectAll('.foreground path').style({'stroke': '#ddd', 'stroke-width': '1px'})
+        d3.select(this).style({'stroke': 'gold', 'stroke-width': '3px'});
         d3.select('#btn-title').text(d.Name).style('display', 'block');
         d3.select('#tbl_output').html(tbl_row(d));
       });
