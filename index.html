@@ -59,18 +59,35 @@ text.label {
   display: none;
 }
 
-div#sliders input[type=range] {
+/*div#sliders label {
+  font-weight: normal;
+  width: 280px;
+}
+*/
+
+div.controls label {
+  font-weight: normal;
+  width: 280px;
+}
+
+div.controls input {
   display: inline-block;
   width: 150px;
   vertical-align: middle;
   float: right;
 }
 
-div#sliders label {
-  font-weight: normal;
-  width: 280px;
+div#size {
+  margin-bottom: 5px;
 }
-
+/*div#size input,
+div#sliders input[type=range] {
+  display: inline-block;
+  width: 150px;
+  vertical-align: middle;
+  float: right;
+}
+*/
 
 </style>
 <head>
@@ -94,11 +111,11 @@ div#sliders label {
       <table class='table table-bordered table-striped' id='tbl_output'></table>
     </div>
 
-    <div id="sliders">
-      <!-- <label>Indexing <input type='range' min=0 max=100 step=10></label> -->
-      <!-- <label>Indexing <input type='range' min=0 max=100 step=10></label> -->
-
+    <div class='controls'>
+      <div id="size"><label>Problem Size<input type="number" min="0" step="1000"></label></div>
+      <div id="sliders"></div>
     </div>
+
   </div>
 
 

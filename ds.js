@@ -64,7 +64,7 @@ function create_sliders(dimensions) {
       .append('div')
       .attr('id', function(d,i) { return 'slider'+i; })
       .append('label')
-      .text(function(d) { return d+' '; })
+      .text(function(d) { return d; })
       .append('input')
       .property({'type':'range', 'min':0, 'max':100, 'step':10});
 
