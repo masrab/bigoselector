@@ -18,9 +18,59 @@ var line = d3.svg.line(),
     background,
     foreground;
 
-d3.csv('ds.csv', function(err, dataset) {
+var source_select = d3.select("#source_select");
+
+// initialize the plot
+d3.csv(source_select.property('value'), function(err, dataset) {
   draw(dataset);
+
+  // create sliders
+  create_sliders(dimensions);
 });
+
+// select data source and draw
+source_select.on("change", function(){
+
+  // clean the figure (better way??)
+  svg.selectAll('g').remove(); 
+
+  // load data and draw
+  d3.csv(source_select.property('value'), function(err, dataset) {
+    draw(dataset);
+
+    // update sliders
+    create_sliders(dimensions);
+});
+
+
+
+});
+
+
+
+
+// functions 
+
+function create_sliders(dimensions) {
+
+    d3.select('#sliders')
+    .selectAll('div')
+    .remove();
+    
+    d3.select('#sliders')
+    .selectAll('div')
+      .data(dimensions)
+    .enter()
+      .append('div')
+      .attr('id', function(d,i) { return 'slider'+i; })
+      .append('label')
+      .text(function(d) { return d+' '; })
+      .append('input')
+      .property({'type':'range', 'min':0, 'max':100, 'step':10});
+
+
+}
+
 
 
 function draw(dataset) {
@@ -47,10 +97,10 @@ function draw(dataset) {
 
   // Add a group element for each dimension.
   var g = svg.selectAll(".dimension")
-      .data(dimensions)
-    .enter().append("g")
-      .attr("class", "dimension")
-      .attr("transform", function(d) { return "translate(" + x(d) + ")"; });
+            .data(dimensions)
+          .enter().append("g")
+            .attr("class", "dimension")
+            .attr("transform", function(d) { return "translate(" + x(d) + ")"; });
 
   g.append("g")
       .attr("class", "axis")
