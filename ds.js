@@ -1,6 +1,6 @@
 var margin = {top: 30, right: 10, bottom: 10, left: 10},
     width = 1000 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    height = 300 - margin.top - margin.bottom;
 
 
 var svg = d3.select(".chart").append("svg")
@@ -60,6 +60,7 @@ function render_page(dataset){
     return d != "Name"});
 
 
+
   draw(dataset, dimensions);
 
   // create sliders
@@ -68,8 +69,10 @@ function render_page(dataset){
 
 
   var n = get_size();
-  var scores = score(dataset, n);
-  render_ranking(scores); 
+  scores = score(dataset, n);
+  render_ranking(scores);
+  highlight_best(scores);
+
 
   d3.selectAll(".controls input")
   .on("input", function() {
@@ -77,15 +80,25 @@ function render_page(dataset){
     var n = get_size();
     var scores = score(dataset, n);
     render_ranking(scores); 
+    highlight_best(scores);
 
   });
 
 };
 
 
+function highlight_best(scores){
+
+  name_best = d3.keys(scores.sort(obj_descending)[0])[0];
+  d3.selectAll('.foreground path')
+  .filter(function(d) { return d.Name === name_best; })
+  .call(highlight);
+
+}
+
 function render_ranking (scores) {
 
-  d3.select("div#ranking").selectAll("*").remove();
+  d3.select("div#ranking").selectAll("ol").remove();
 
   d3.select("div#ranking")
   .append("ol")
@@ -125,7 +138,7 @@ function print_debug(names, weight, row_scores, row_costs){
  .enter()
  .append("p")
  .text(function(d,i) { return names[i]+ ': '+ d.map(d3.format(".3f")).join('  ,  '); });
-
+ console.log(weight);
  console.log('row_costs: ', row_costs);
  console.log('row_scores: ', row_scores); 
 
@@ -140,7 +153,6 @@ function score(dataset, n) {
   var values = get_slider_values(),
   slider_sum = d3.sum(values),
   weight = values.map(function(x) { return x/slider_sum;});
-  console.log(weight);
 
   //calc cost for each row
   var row_costs = dataset.map(function(d) {return row_cost(d, n);} );
@@ -150,7 +162,7 @@ function score(dataset, n) {
   var scores = row_scores.map(function(rs) {return d3.sum(rs);});
 
   var names = dataset.map(function(d){ return d.Name;});
-  print_debug(names, weight, row_scores, row_costs);
+  // print_debug(names, weight, row_scores, row_costs);
 
 
   var scores_obj = [];
@@ -315,7 +327,7 @@ function draw(dataset, dimensions) {
       // hover effect
       foreground
       .on('mouseover', function(d) { 
-        d3.selectAll('.foreground path').style({'stroke': '#ddd', 'stroke-width': '1px'})
+        
         d3.select(this).call(highlight);
       });
 
@@ -337,6 +349,7 @@ function tbl_row(obj) {
 }
 
 function highlight(selected_path) {
+  d3.selectAll('.foreground path').style({'stroke': '#ddd', 'stroke-width': '1px'})
   selected_path.style({'stroke': 'gold', 'stroke-width': '3px'});
   d3.select('#btn-title').text(selected_path.datum().Name).style('display', 'block');
   d3.select('#tbl_output').html(tbl_row(selected_path.datum()));
