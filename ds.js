@@ -42,6 +42,17 @@ source_select.on("change", function(){
 
 
 // functions 
+
+
+function obj_ascending (obj1, obj2) {
+  return d3.ascending(d3.values(obj1), d3.values(obj2));
+}
+
+function obj_descending (obj1, obj2) {
+  return d3.descending(d3.values(obj1), d3.values(obj2));
+}
+
+
 function render_page(dataset){
 
   // extract colnames
@@ -55,19 +66,38 @@ function render_page(dataset){
   create_sliders(dimensions);
 
 
-  d3.selectAll(".controls input")
-  .on("input", function() {
-    score(dataset, get_size())
-  });
-
 
   var n = get_size();
-  score(dataset, n);
+  var scores = score(dataset, n);
+  render_ranking(scores); 
+
+  d3.selectAll(".controls input")
+  .on("input", function() {
+
+    var n = get_size();
+    var scores = score(dataset, n);
+    render_ranking(scores); 
+
+  });
 
 };
 
 
+function render_ranking (scores) {
 
+  d3.select("div#ranking").selectAll("*").remove();
+
+  d3.select("div#ranking")
+  .append("ol")
+  .selectAll("li")
+  .data(scores)
+  .enter()
+  .append("li")
+  .sort(obj_descending)
+  .text(function(d) {return d3.keys(d)+": "+ d3.values(d).map(d3.format(".4f"));})
+
+
+}
 
 function print_debug(names, weight, row_scores, row_costs){
 
@@ -96,6 +126,9 @@ function print_debug(names, weight, row_scores, row_costs){
  .append("p")
  .text(function(d,i) { return names[i]+ ': '+ d.map(d3.format(".3f")).join('  ,  '); });
 
+ console.log('row_costs: ', row_costs);
+ console.log('row_scores: ', row_scores); 
+
 }
 
 
@@ -111,16 +144,23 @@ function score(dataset, n) {
 
   //calc cost for each row
   var row_costs = dataset.map(function(d) {return row_cost(d, n);} );
-  console.log('row_costs: ', row_costs);
+
   var row_scores = row_costs.map(function(cost) { return row_score(weight, cost)});
-  console.log('row_scores: ', row_scores);
+
   var scores = row_scores.map(function(rs) {return d3.sum(rs);});
 
   var names = dataset.map(function(d){ return d.Name;});
   print_debug(names, weight, row_scores, row_costs);
 
 
- return scores;
+  var scores_obj = [];
+  for (i in names) {
+    tmp = {};
+    tmp[names[i]] = scores[i];
+    scores_obj.push(tmp);
+  };
+
+ return scores_obj;
 }
 
 // calculate score for given cost and weight vectors
@@ -190,7 +230,8 @@ var equations=
   },
 
   'Undefined': function(x) {
-    return 1e15;
+    // return 1e15;
+    return Infinity;
   }
 
 };
