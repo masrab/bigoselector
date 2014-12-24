@@ -15,34 +15,26 @@ var x = d3.scale.ordinal().rangePoints([0, width], 1),
 
 var line = d3.svg.line(),
     axis = d3.svg.axis().orient("left"),
-    background,
     foreground;
 
 var source_select = d3.select("#source_select");
 
-// initialize the plot
-d3.csv(source_select.property('value'), function(err, dataset) {
-  draw(dataset);
-
-  // create sliders
-  create_sliders(dimensions);
+// first time
+// load data and render the page
+d3.csv(source_select.property("value"), function(err, dataset) {
+  render_page(dataset);
 });
 
-// select data source and draw
+
+// on source change
 source_select.on("change", function(){
 
-  // clean the figure (better way??)
-  svg.selectAll('g').remove(); 
-
-  // load data and draw
-  d3.csv(source_select.property('value'), function(err, dataset) {
-    draw(dataset);
-
-    // update sliders
-    create_sliders(dimensions);
-});
-
-
+  // clean up svg canvas
+  svg.selectAll('*').remove(); 
+  // load data and render the page
+  d3.csv(source_select.property("value"), function(err, dataset) {
+    render_page(dataset);
+  });
 
 });
 
@@ -50,7 +42,174 @@ source_select.on("change", function(){
 
 
 // functions 
+function render_page(dataset){
 
+  // extract colnames
+  var dimensions = d3.keys(dataset[0]).filter(function(d) {
+    return d != "Name"});
+
+
+  draw(dataset, dimensions);
+
+  // create sliders
+  create_sliders(dimensions);
+
+
+  d3.selectAll(".controls input")
+  .on("input", function() {
+    score(dataset, get_size())
+  });
+
+
+  var n = get_size();
+  score(dataset, n);
+
+};
+
+
+
+
+function print_debug(names, weight, row_scores, row_costs){
+
+ var score_div = d3.select("div.debug");
+
+ score_div.html(null);
+
+ score_div.append('h2').text('Weights: ');
+ score_div.append('p').text(weight.map(d3.format("%")));
+
+
+ score_div.append('h2').text('row_scores: ');
+ score_div.append("div")
+ .selectAll("p")
+ .data(row_scores)
+ .enter()
+ .append("p")
+ .text(function(d,i) { return names[i]+ ': '+ d.map(d3.format(".3f")).join('  ,  '); });
+
+
+ score_div.append('h2').text('row_costs: ');
+ score_div.append("div")
+ .selectAll("p")
+ .data(row_costs)
+ .enter()
+ .append("p")
+ .text(function(d,i) { return names[i]+ ': '+ d.map(d3.format(".3f")).join('  ,  '); });
+
+}
+
+
+
+
+
+function score(dataset, n) {
+  // n: problem size
+  var values = get_slider_values(),
+  slider_sum = d3.sum(values),
+  weight = values.map(function(x) { return x/slider_sum;});
+  console.log(weight);
+
+  //calc cost for each row
+  var row_costs = dataset.map(function(d) {return row_cost(d, n);} );
+  console.log('row_costs: ', row_costs);
+  var row_scores = row_costs.map(function(cost) { return row_score(weight, cost)});
+  console.log('row_scores: ', row_scores);
+  var scores = row_scores.map(function(rs) {return d3.sum(rs);});
+
+  var names = dataset.map(function(d){ return d.Name;});
+  print_debug(names, weight, row_scores, row_costs);
+
+
+ return scores;
+}
+
+// calculate score for given cost and weight vectors
+function row_score(weight, cost){
+// weight: vector of weights (length = # dimensions)
+// cost: vector of cost calculated from equations (length = # dimensions)
+var score = [];
+
+for (i in cost){
+  score[i] = weight[i] * (1/cost[i]);
+};
+
+return score;
+};
+
+// calculate cost vector for a single row
+function row_cost(d, n) {
+  // d: object representing one row of data
+  // n: problem size
+
+  var d = d3.map(d);
+  d.remove('Name');
+
+  var dimensions = d.keys();
+  var cost = [];
+
+  var cost = dimensions.map(function(dim) {
+   return equations[d.get(dim)](n); 
+ });
+
+
+  return cost;
+};
+
+var equations= 
+{
+  'O(n!)': function(x) {
+    var rval=1;
+    for (var i = 2; i <= x; i++) {
+      rval = rval * i;
+    }
+    return rval;
+  },
+
+  'O(n^2)': function(x) {
+    return x * x;
+  },
+
+  'O(n log(n))': function(x) {
+    return x * Math.log(x);
+  },
+
+  'O(log(n))': function(x) {
+    return Math.log(x);
+  },
+
+  'O(n)': function(x) {
+    return x;
+  },
+
+  'O(m+n)': function(x) {
+    return x;
+  },
+
+  'O(1)': function(x) {
+    return 1;
+  },
+
+  'Undefined': function(x) {
+    return 1e15;
+  }
+
+};
+
+function get_size(){
+  return +d3.select("div#size input").property('value');
+}
+
+
+function get_slider_values() {
+  var slider_values = 
+  d3.selectAll('div#sliders input')[0]
+  .map(function(slider) {return +slider.value;});
+
+  return slider_values;
+};
+
+
+// dynamically create sliders for each input dimension
 function create_sliders(dimensions) {
 
     d3.select('#sliders')
@@ -66,18 +225,15 @@ function create_sliders(dimensions) {
       .append('label')
       .text(function(d) { return d; })
       .append('input')
-      .property({'type':'range', 'min':0, 'max':100, 'step':10});
+      .property({'type':'range', 'min':0, 'max':100, 'step':25});
 
 
 }
 
 
 
-function draw(dataset) {
-  // extract colnames
-  dimensions = d3.keys(dataset[0]).filter(function(d) {
-    return d != "Name"});
-
+function draw(dataset, dimensions) {
+  
   x.domain(dimensions);
 
   // create an array of scales. one for each column
@@ -93,7 +249,7 @@ function draw(dataset) {
       .data(dataset)
       .enter()
       .append('path')
-      .attr('d', path);
+      .attr('d', function(d) { return path(d,dimensions); } );
 
   // Add a group element for each dimension.
   var g = svg.selectAll(".dimension")
@@ -127,7 +283,7 @@ function draw(dataset) {
 
 
 // Returns the path for a given data point.
-function path(d) {
+function path(d, dimensions) {
   return line(dimensions.map(function(p) { return [x(p), y[p](d[p])]; }));
 }
 
@@ -139,8 +295,8 @@ function tbl_row(obj) {
   return '<tr>' + header.join('') + '</tr>' + '<tr>'+row.join('')+'</tr>';
 }
 
-function highlight(selection) {
-  selection.style({'stroke': 'gold', 'stroke-width': '3px'});
-  d3.select('#btn-title').text(selection.datum().Name).style('display', 'block');
-  d3.select('#tbl_output').html(tbl_row(selection.datum()));
+function highlight(selected_path) {
+  selected_path.style({'stroke': 'gold', 'stroke-width': '3px'});
+  d3.select('#btn-title').text(selected_path.datum().Name).style('display', 'block');
+  d3.select('#tbl_output').html(tbl_row(selected_path.datum()));
 }

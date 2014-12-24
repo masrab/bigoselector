@@ -4,9 +4,9 @@
 
 #container {
   width: 1050px;
-  /*height: 500px;*/
   margin: auto;
   margin-top: 20px;
+  margin-bottom: 20px;
   padding: 10px;
   border:1px solid black;
   /*background-color: ghostwhite;*/
@@ -64,13 +64,19 @@ text.label {
   width: 280px;
 }
 */
+fieldset.controls {
+  padding: 5px;
+  font-weight: normal;
+  width: 300px;
+}
 
-div.controls label {
+
+fieldset.controls label {
   font-weight: normal;
   width: 280px;
 }
 
-div.controls input {
+fieldset.controls input {
   display: inline-block;
   width: 150px;
   vertical-align: middle;
@@ -80,14 +86,7 @@ div.controls input {
 div#size {
   margin-bottom: 5px;
 }
-/*div#size input,
-div#sliders input[type=range] {
-  display: inline-block;
-  width: 150px;
-  vertical-align: middle;
-  float: right;
-}
-*/
+
 
 </style>
 <head>
@@ -111,9 +110,16 @@ div#sliders input[type=range] {
       <table class='table table-bordered table-striped' id='tbl_output'></table>
     </div>
 
-    <div class='controls'>
-      <div id="size"><label>Problem Size<input type="number" min="0" step="1000"></label></div>
+    <fieldset class='controls'>
+      <legend>Problem Specification</legend>
+      <div id="size">
+        <label>Problem Size<input type="number" min="0" step="1000" value="10000"></label>
+      </div>
       <div id="sliders"></div>
+    </fieldset>
+
+    <div class="debug">
+
     </div>
 
   </div>
